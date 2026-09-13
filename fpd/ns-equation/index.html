@@ -852,19 +852,19 @@ $<span class="arithmatex">\(\int_{\Omega} \nabla\cdot\sigma\;dV \approx \nabla\c
 <div class="arithmatex">\[\nabla v = \begin{pmatrix}  \frac{\partial v_x}{\partial x} &amp; \frac{\partial v_x}{\partial y} &amp; \frac{\partial v_x}{\partial z} \\ \frac{\partial v_y}{\partial x} &amp; \frac{\partial v_y}{\partial y} &amp; \frac{\partial v_y}{\partial z} \\ \frac{\partial v_z}{\partial x} &amp; \frac{\partial v_z}{\partial y} &amp; \frac{\partial v_z}{\partial z} \end{pmatrix}\]</div>
 <p>任何方阵都可以严格唯一地拆分为对称矩阵 <span class="arithmatex">\(E\)</span> 与反对称矩阵 <span class="arithmatex">\(\Omega\)</span>：</p>
 <div class="arithmatex">\[\nabla v = E + \Omega, \quad \text{其中 } E = \frac{1}{2}\left(\nabla v + \nabla v^T\right), \; \Omega = \frac{1}{2}\left(\nabla v - \nabla v^T\right)\]</div>
-<p>$$\Omega
+<p>$<span class="arithmatex">\(\Omega
 = \frac{1}{2}
 \begin{pmatrix}
-0 &amp; (\frac{\partial v_x}{\partial y} - \frac{\partial v_y}{\partial x}) &amp; (\frac{\partial v_x}{\partial z} - \frac{\partial v_z}{\partial x}) \
-(\frac{\partial v_y}{\partial x} - \frac{\partial v_x}{\partial y}) &amp; 0 &amp; (\frac{\partial v_y}{\partial z} - \frac{\partial v_z}{\partial y}) \
+0 &amp; (\frac{\partial v_x}{\partial y} - \frac{\partial v_y}{\partial x}) &amp; (\frac{\partial v_x}{\partial z} - \frac{\partial v_z}{\partial x}) \\
+(\frac{\partial v_y}{\partial x} - \frac{\partial v_x}{\partial y}) &amp; 0 &amp; (\frac{\partial v_y}{\partial z} - \frac{\partial v_z}{\partial y}) \\
 (\frac{\partial v_z}{\partial x} - \frac{\partial v_x}{\partial z}) &amp; (\frac{\partial v_z}{\partial y} - \frac{\partial v_y}{\partial z}) &amp; 0
-\end{pmatrix}</p>
-<p>= \frac{1}{2}
+\end{pmatrix}
+= \frac{1}{2}
 \begin{pmatrix}
-0 &amp; -w_z &amp; w_y \
-w_z &amp; 0 &amp; -w_x \
+0 &amp; -w_z &amp; w_y \\
+w_z &amp; 0 &amp; -w_x \\
 -w_y &amp; w_x &amp; 0
-\end{pmatrix}$$
+\end{pmatrix}\)</span>$
 也就是说：
 $<span class="arithmatex">\(\Omega dx = \frac{1}{2} \omega \times dx\)</span>$
 也就是说<span class="arithmatex">\(\Omega\)</span>掌管整体选择，而整体旋转是不会产生粘滞阻力的。
