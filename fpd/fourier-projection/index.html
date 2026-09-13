@@ -1,0 +1,1243 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="胶体悬浮液流体粒子动力学（FPD）模拟器——从 F=ma 到离散代码的公式推导">
+      
+      
+      
+      
+        <link rel="prev" href="../ns-equation/">
+      
+      
+        <link rel="next" href="../discretization/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>第二篇 · 傅里叶投影 - FPD_NEXT 公式推导</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#ns" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="FPD_NEXT 公式推导" class="md-header__button md-logo" aria-label="FPD_NEXT 公式推导" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FPD_NEXT 公式推导
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              第二篇 · 傅里叶投影
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到深色模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换到深色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到浅色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换到浅色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="FPD_NEXT 公式推导" class="md-nav__button md-logo" aria-label="FPD_NEXT 公式推导" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    FPD_NEXT 公式推导
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ns-equation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第一篇 · NS 方程推导
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第二篇 · 傅里叶投影
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第二篇 · 傅里叶投影
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 压力是个「工具人」
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 投影法：先假装没有压力，算完再按回去
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-helmholtzhodge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 Helmholtz–Hodge 分解：为什么这叫「投影」
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3 Helmholtz–Hodge 分解：为什么这叫「投影」">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 连续形式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 离散形式：为什么算子必须自伴
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 傅里叶变换：把微分方程变成除法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-dft-lambda_xy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 二维 DFT 对角化：\(\lambda_{xy}\) 是哪来的
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 两条求解路径
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6 两条求解路径">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-wall_z-03d-fft" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 全周期（wall_z = 0）：3D FFT + 精确离散本征值
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-wall_z-1xy-2d-fft-z" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 壁面（wall_z = 1）：xy 批量 2D FFT + z 向三对角
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 两个模式共用一个入口
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-cufft" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 cuFFT 的两个静默陷阱
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7 cuFFT 的两个静默陷阱">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 轴序搞反不报错，只是得到一个转置的场
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-3d-size2d-nxny" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 归一化：3D 除 size，2D 批量除 Nx*Ny
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8 公式 ↔ 代码对照
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9 实测判据
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10 下一步
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../discretization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第三篇 · 离散化
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 压力是个「工具人」
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 投影法：先假装没有压力，算完再按回去
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-helmholtzhodge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 Helmholtz–Hodge 分解：为什么这叫「投影」
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3 Helmholtz–Hodge 分解：为什么这叫「投影」">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 连续形式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 离散形式：为什么算子必须自伴
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 傅里叶变换：把微分方程变成除法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-dft-lambda_xy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 二维 DFT 对角化：\(\lambda_{xy}\) 是哪来的
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 两条求解路径
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6 两条求解路径">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-wall_z-03d-fft" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 全周期（wall_z = 0）：3D FFT + 精确离散本征值
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-wall_z-1xy-2d-fft-z" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 壁面（wall_z = 1）：xy 批量 2D FFT + z 向三对角
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 两个模式共用一个入口
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-cufft" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 cuFFT 的两个静默陷阱
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7 cuFFT 的两个静默陷阱">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 轴序搞反不报错，只是得到一个转置的场
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-3d-size2d-nxny" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 归一化：3D 除 size，2D 批量除 Nx*Ny
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8 公式 ↔ 代码对照
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9 实测判据
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10 下一步
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="ns">用二维傅里叶变换求解不可压 NS<a class="headerlink" href="#ns" title="Permanent link">&para;</a></h1>
+<p>本页是三部曲的<strong>第二篇</strong>。第一篇把方程推出来了，但留了个麻烦：压力 <span class="arithmatex">\(p\)</span>。
+它没有自己的演化方程，唯一的作用是逼着流体满足 <span class="arithmatex">\(\nabla\cdot v=0\)</span>。
+本页要做两件事：先把约束变成可解的方程（投影法），再一步把它解掉（二维傅里叶变换 / FFT）。</p>
+<ul>
+<li>第一篇：<a href="../ns-equation/">从 F=ma 推导 Navier–Stokes 方程（FPD 形式）</a></li>
+<li>第三篇：<a href="../discretization/">二维与 z 向离散化</a></li>
+</ul>
+<p>单位约定同第一篇：格距 <span class="arithmatex">\(dx\equiv 1\)</span>、密度 <span class="arithmatex">\(\rho\equiv 1\)</span>、溶剂粘度 <span class="arithmatex">\(\eta_\ell\equiv 1\)</span>。</p>
+<h2 id="1">1 压力是个「工具人」<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
+<p>第一篇推出来的动量方程与约束是</p>
+<div class="arithmatex">\[\frac{\partial v}{\partial t} + (v\cdot\nabla)v = -\nabla p + \nabla\cdot\left[\eta\left(\nabla v + \nabla v^{T}\right)\right] + f \tag{3}\]</div>
+<div class="arithmatex">\[\nabla\cdot v = 0 \tag{4}\]</div>
+<p>盯着这两行你会发现一件尴尬的事：(3) 里没有 <span class="arithmatex">\(\partial_t p\)</span>，(4) 里也没有。
+压力不是状态量，它是约束 (4) 的<strong>拉格朗日乘子</strong> —— 为了让不可压条件成立而临时解出来的东西。</p>
+<div class="admonition note">
+<p>翻译成人话：<span class="arithmatex">\(v\)</span> 可以按时间往前推，<span class="arithmatex">\(p\)</span> 不行。每一个时间步都得重新解一个 <span class="arithmatex">\(p\)</span>，
+使得推进完的速度恰好无散。</p>
+</div>
+<h2 id="2">2 投影法：先假装没有压力，算完再按回去<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
+<p>把一个时间步拆成三步：</p>
+<div class="arithmatex">\[v^{*} = v^{n} + dt\left(-\nabla\cdot\Pi + f\right) \tag{5}\]</div>
+<div class="arithmatex">\[\nabla^2 p = \frac{1}{dt}\nabla\cdot v^{*} \tag{6}\]</div>
+<div class="arithmatex">\[v^{n+1} = v^{*} - dt\,\nabla p \tag{7}\]</div>
+<p>(5) 只算对流、粘性、外力，得到一个中间速度 <span class="arithmatex">\(v^{*}\)</span>（一般 <span class="arithmatex">\(\nabla\cdot v^{*}\neq 0\)</span>）；
+(6) 解出修正量；(7) 把它扣掉。</p>
+<p><strong>为什么 (6) 一定是对的</strong>：对 (7) 两边取散度，并强制下一时刻无散：</p>
+<div class="arithmatex">\[\nabla\cdot v^{n+1} = \nabla\cdot v^{*} - dt\,\nabla\cdot(\nabla p) = \nabla\cdot v^{*} - dt\,\nabla^2 p = 0\]</div>
+<p>移项就是 (6)。所以泊松方程的右端不是新加的物理，而是「投影必须精确」这个要求的代数后果。</p>
+<div class="admonition warning">
+<p><strong>本项目的关键不变量</strong>：(6) 里的 <span class="arithmatex">\(\nabla^2\)</span> 必须是「(7) 用的梯度 <span class="arithmatex">\(\nabla\)</span>」与
+「散度检验用的 <span class="arithmatex">\(\nabla\cdot\)</span>」的<strong>精确复合</strong> <span class="arithmatex">\(div\circ grad\)</span>，三处用同一套离散。
+否则 <span class="arithmatex">\(\nabla\cdot v^{n+1}\)</span> 只到截断误差，投影法的全部意义就没了（离散形式见第三篇）。</p>
+</div>
+<p>代码里右端与修正步是两个分开的 kernel —— 因为 <span class="arithmatex">\(p\)</span> 的梯度要读相邻线程刚写下的 <span class="arithmatex">\(p\)</span>：</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// src/Stokes.cpp — §3b 泊松右端 b = (1/dt)·div(v*)</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kt">double</span><span class="w"> </span><span class="n">div_vs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">tmp_fx</span><span class="p">[</span><span class="n">ijk</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">tmp_fx</span><span class="p">[</span><span class="n">IDX</span><span class="p">(</span><span class="n">im</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)])</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">              </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">tmp_fy</span><span class="p">[</span><span class="n">ijk</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">tmp_fy</span><span class="p">[</span><span class="n">IDX</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">jm</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)])</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">              </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">tmp_fz</span><span class="p">[</span><span class="n">ijk</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">tmp_fz</span><span class="p">[</span><span class="n">IDX</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">km</span><span class="p">)]);</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">fft_data</span><span class="p">[</span><span class="n">ijk</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">2</span><span class="p">]</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="n">cfg</span><span class="p">.</span><span class="n">inv_dt</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">div_vs</span><span class="p">;</span><span class="w">   </span><span class="c1">// 注意：乘 inv_dt = 1/dt</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">fft_data</span><span class="p">[</span><span class="n">ijk</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span><span class="w">                   </span><span class="c1">// 右端是实场</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// src/Stokes.cpp — §4 求解 / §5 修正步</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">solve_pressure</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span><span class="w"> </span><span class="n">fft_data</span><span class="p">,</span><span class="w"> </span><span class="n">tri_w</span><span class="p">,</span><span class="w"> </span><span class="n">plan</span><span class="p">,</span><span class="w"> </span><span class="n">plan_xy</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">diag</span><span class="p">);</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">vx</span><span class="p">[</span><span class="n">ijk</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tmp_fx</span><span class="p">[</span><span class="n">ijk</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">DT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">IDX</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">p</span><span class="p">[</span><span class="n">ijk</span><span class="p">]);</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">vy</span><span class="p">[</span><span class="n">ijk</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tmp_fy</span><span class="p">[</span><span class="n">ijk</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">DT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">IDX</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">jp</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">p</span><span class="p">[</span><span class="n">ijk</span><span class="p">]);</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">wz_pinned_zface</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="n">vz</span><span class="p">[</span><span class="n">ijk</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tmp_fz</span><span class="p">[</span><span class="n">ijk</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">DT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">IDX</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">kp</span><span class="p">)]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">p</span><span class="p">[</span><span class="n">ijk</span><span class="p">]);</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="p">}</span>
+</code></pre></div>
+<h2 id="3-helmholtzhodge">3 Helmholtz–Hodge 分解：为什么这叫「投影」<a class="headerlink" href="#3-helmholtzhodge" title="Permanent link">&para;</a></h2>
+<h3 id="31">3.1 连续形式<a class="headerlink" href="#31" title="Permanent link">&para;</a></h3>
+<p>任何足够光滑的矢量场 <span class="arithmatex">\(v^{*}\)</span> 都能唯一拆成</p>
+<div class="arithmatex">\[v^{*} = v + \nabla\chi, \qquad \nabla\cdot v = 0\]</div>
+<p>其中 <span class="arithmatex">\(v\)</span> 无散、<span class="arithmatex">\(\nabla\chi\)</span> 是纯梯度（无旋）。这两部分在内积意义下<strong>正交</strong>，
+证明只要一次分部积分：</p>
+<div class="arithmatex">\[\langle v, \nabla\chi\rangle = \int_{\Omega}v\cdot\nabla\chi\,d\Omega = \oint_{\partial\Omega}\chi\,(v\cdot\hat{n})\,dS - \int_{\Omega}\chi\,(\nabla\cdot v)\,d\Omega\]</div>
+<ul>
+<li>第二项为 0，因为 <span class="arithmatex">\(\nabla\cdot v = 0\)</span>；</li>
+<li>第一项也为 0，因为边界上法向速度为零 —— 周期边界是逐位相消，壁面边界是
+    <span class="arithmatex">\(v\cdot\hat{n} = 0\)</span>（代码里 <code>vz</code> 在两壁被钉死）。</li>
+</ul>
+<p>所以整个空间是正交直和，而「从 <span class="arithmatex">\(v^{*}\)</span> 里取出无散部分」就是<strong>正交投影</strong>，
+(7) 式正是它在数值上的实现。</p>
+<h3 id="32">3.2 离散形式：为什么算子必须自伴<a class="headerlink" href="#32" title="Permanent link">&para;</a></h3>
+<p>离散化后记 <span class="arithmatex">\(D\)</span> 为散度矩阵、<span class="arithmatex">\(G\)</span> 为梯度矩阵，(7) 变成 <span class="arithmatex">\(v^{n+1} = v^{*} - dt\,Gp\)</span>。
+两边乘 <span class="arithmatex">\(D\)</span> 并令 <span class="arithmatex">\(Dv^{n+1}=0\)</span>：</p>
+<div class="arithmatex">\[p = \frac{1}{dt}\left(DG\right)^{-1}Dv^{*}, \qquad v^{n+1} = \left[I - G\left(DG\right)^{-1}D\right]v^{*}\]</div>
+<p>记 <span class="arithmatex">\(P = I - G(DG)^{-1}D\)</span>、<span class="arithmatex">\(L = DG\)</span>。离散的 <span class="arithmatex">\(D\)</span> 与 <span class="arithmatex">\(G\)</span> 满足 <span class="arithmatex">\(D = -G^{T}\)</span>（第三篇证明），于是</p>
+<div class="arithmatex">\[L = DG = -G^{T}G \quad \text{对称半负定}, \qquad P^2 = P, \qquad DP = 0, \qquad P^{T} = P\]</div>
+<p>前两个说明它是投影（投一次就落到无散子空间，再投不动），后两个说明它是正交投影（不扭曲空间）。</p>
+<div class="admonition warning">
+<p>这四个性质<strong>全部依赖</strong> <span class="arithmatex">\(D = -G^{T}\)</span>，也就是「散度和梯度用同一套离散」。
+换句话说：第一篇那句「<span class="arithmatex">\(\eta\)</span> 不能提出散度」，在离散层面的同款要求就是
+「泊松算子必须由同一个 <span class="arithmatex">\(div\)</span> 与 <span class="arithmatex">\(grad\)</span> 复合而成」。</p>
+</div>
+<h2 id="4">4 傅里叶变换：把微分方程变成除法<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
+<p>对周期（或边界上衰减）的函数，分部积分给出求导性质</p>
+<div class="arithmatex">\[\mathcal{F}\left\{\frac{\partial f}{\partial x}\right\} = ik_x\hat{f}, \qquad \mathcal{F}\left\{\frac{\partial^2 f}{\partial x^2}\right\} = -k_x^2\hat{f}\]</div>
+<p>于是拉普拉斯算子退化成纯标量乘法：</p>
+<div class="arithmatex">\[\mathcal{F}\left\{\nabla^2 f\right\} = -\left(k_x^2+k_y^2+k_z^2\right)\hat{f} = -k^2\hat{f}\]</div>
+<p>泊松方程 (6) 因此在频域里变成<strong>逐模式的代数除法</strong> <span class="arithmatex">\(\hat{p} = \hat{b}/\lambda\)</span>。
+这就是谱方法的全部内容：<strong>求导 = 乘 <span class="arithmatex">\(ik\)</span>；解泊松 = 除以本征值</strong>。</p>
+<h2 id="5-dft-lambda_xy">5 二维 DFT 对角化：<span class="arithmatex">\(\lambda_{xy}\)</span> 是哪来的<a class="headerlink" href="#5-dft-lambda_xy" title="Permanent link">&para;</a></h2>
+<p>连续谱 <span class="arithmatex">\(-k^2\)</span> 不是离散算子的本征值。设网格周期，把离散傅里叶基</p>
+<div class="arithmatex">\[p_{i,j} = e^{i(\theta_x i + \theta_y j)}, \qquad \theta_x = \frac{2\pi m}{N_x}, \qquad \theta_y = \frac{2\pi n}{N_y}\]</div>
+<p>代入 <span class="arithmatex">\(xy\)</span> 方向的二阶中心差分，用移位性质 <span class="arithmatex">\(p_{i+1,j} = e^{i\theta_x}p_{i,j}\)</span>：</p>
+<div class="arithmatex">\[\frac{(L_{xy}p)_{i,j}}{p_{i,j}} = \left(e^{i\theta_x} - 2 + e^{-i\theta_x}\right) + \left(e^{i\theta_y} - 2 + e^{-i\theta_y}\right) = 2(\cos\theta_x - 1) + 2(\cos\theta_y - 1)\]</div>
+<p>也就是说 <span class="arithmatex">\(xy\)</span> 拉普拉斯被离散 Fourier 基<strong>精确对角化</strong>，本征值是</p>
+<div class="arithmatex">\[\lambda_{xy}(m,n) = 2\left(\cos\frac{2\pi m}{N_x} - 1\right) + 2\left(\cos\frac{2\pi n}{N_y} - 1\right) \le 0\]</div>
+<p><strong>为什么偏偏是二维 FFT</strong>：壁面只加在 <span class="arithmatex">\(z\)</span> 方向，<span class="arithmatex">\(x/y\)</span> 在两种模式下都是周期的，
+所以 <span class="arithmatex">\(x/y\)</span> 永远可以用 FFT 精确对角化；<span class="arithmatex">\(z\)</span> 不一定。这就是下一节两条路径的分水岭。</p>
+<h2 id="6">6 两条求解路径<a class="headerlink" href="#6" title="Permanent link">&para;</a></h2>
+<h3 id="61-wall_z-03d-fft">6.1 全周期（<code>wall_z = 0</code>）：3D FFT + 精确离散本征值<a class="headerlink" href="#61-wall_z-03d-fft" title="Permanent link">&para;</a></h3>
+<p>三方向都周期时，把三组差分一起代入，得到 7 点格式的<strong>精确离散本征值</strong></p>
+<div class="arithmatex">\[\lambda(k) = 2\left(\cos\theta_x + \cos\theta_y + \cos\theta_z - 3\right), \qquad \theta_x = \frac{2\pi m}{N_x}\]</div>
+<p>代码里写的是 <span class="arithmatex">\(1/\lambda\)</span>，也就是 <code>0.5 / (cos + cos + cos - 3)</code>：</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// src/Poisson.cpp — solve_periodic：3D FFT + 精确离散本征值</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">CUFFT_CHECK</span><span class="p">(</span><span class="n">cufftExecZ2Z</span><span class="p">(</span><span class="n">plan3d</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">cufftDoubleComplex</span><span class="o">*</span><span class="p">)</span><span class="n">fft_data</span><span class="p">,</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">                         </span><span class="p">(</span><span class="n">cufftDoubleComplex</span><span class="o">*</span><span class="p">)</span><span class="n">fft_data</span><span class="p">,</span><span class="w"> </span><span class="n">CUFFT_FORWARD</span><span class="p">));</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">Nz</span><span class="p">;</span><span class="w"> </span><span class="n">k</span><span class="o">++</span><span class="p">)</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">{</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">ijk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">IDX</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">);</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">fft_data</span><span class="p">[</span><span class="n">ijk</span><span class="o">*</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">fft_data</span><span class="p">[</span><span class="n">ijk</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="k">continue</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">nrm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="n">M_PI</span><span class="o">*</span><span class="n">i</span><span class="o">/</span><span class="n">Nx</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">cos</span><span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="n">M_PI</span><span class="o">*</span><span class="n">j</span><span class="o">/</span><span class="n">Ny</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">cos</span><span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="n">M_PI</span><span class="o">*</span><span class="n">k</span><span class="o">/</span><span class="n">Nz</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">3.0</span><span class="p">);</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">    </span><span class="n">fft_data</span><span class="p">[</span><span class="n">ijk</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">2</span><span class="p">]</span><span class="w">     </span><span class="o">*=</span><span class="w"> </span><span class="n">nrm</span><span class="p">;</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">    </span><span class="n">fft_data</span><span class="p">[</span><span class="n">ijk</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">*=</span><span class="w"> </span><span class="n">nrm</span><span class="p">;</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="p">}</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="p">...</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="n">p</span><span class="p">[</span><span class="n">ijk</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fft_data</span><span class="p">[</span><span class="n">ijk</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="kt">double</span><span class="p">)</span><span class="n">size</span><span class="p">;</span><span class="w">     </span><span class="c1">// 逆变换后归一化</span>
+</code></pre></div>
+<div class="admonition note">
+<p>那个 <code>0.5</code> 不是拟合系数：<span class="arithmatex">\(\lambda = 2(\cdots)\)</span>，所以 <span class="arithmatex">\(1/\lambda = 0.5/(\cdots)\)</span>。
+把 <span class="arithmatex">\(2\)</span> 或 <span class="arithmatex">\(0.5\)</span> 任一处写错，散度就压不到机器精度（判据 P6 用算子往返钉死它）。
+<span class="arithmatex">\((0,0,0)\)</span> 模式对应常压力（<span class="arithmatex">\(\lambda = 0\)</span>），单独清零。</p>
+</div>
+<h3 id="62-wall_z-1xy-2d-fft-z">6.2 壁面（<code>wall_z = 1</code>）：xy 批量 2D FFT + z 向三对角<a class="headerlink" href="#62-wall_z-1xy-2d-fft-z" title="Permanent link">&para;</a></h3>
+<p>壁面模式下 <span class="arithmatex">\(z\)</span> 不周期，<strong>不能</strong>对 <span class="arithmatex">\(z\)</span> 做 FFT。但 <span class="arithmatex">\(x/y\)</span> 仍然周期，于是可以对每个 <span class="arithmatex">\(z\)</span> 层
+做二维 FFT，把 <span class="arithmatex">\(L_{xy}\)</span> 换成标量 <span class="arithmatex">\(\lambda_{xy}\)</span>，三维差分方程就<strong>降维</strong>成：
+每个水平模式 <span class="arithmatex">\((m,n)\)</span> 一个独立的 <span class="arithmatex">\(z\)</span> 向方程组</p>
+<div class="arithmatex">\[p_{k-1} + \left(\lambda_{xy} - 2\right)p_k + p_{k+1} = \hat{b}_k\]</div>
+<p>两个端点的对角元会因为「壁面法向面不修正」各少一个 1（完整推导见第三篇），
+所以每个 <span class="arithmatex">\((m,n)\)</span> 是一个 <span class="arithmatex">\(N_z\times N_z\)</span> 的<strong>对称三对角方程</strong>，用 Thomas 算法解。
+这就是「xy 用 FFT 解耦、z 用代数消元」的完整含义。</p>
+<div class="admonition warning">
+<p><strong><span class="arithmatex">\((0,0)\)</span> 这一列不能像周期版那样清零</strong>：它的 <span class="arithmatex">\(z\)</span> 结构是水平均匀的竖直压力分布，
+正是支撑粒子重量的静压。做法是秩一修改：把 <span class="arithmatex">\(d_0\)</span> 减 1，
+既锁定 <span class="arithmatex">\(p_0 = 0\)</span> 又不改原方程（证明见第三篇 §5.3）。</p>
+</div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// src/Poisson.cpp — solve_wall：xy 批量 2D FFT + z 向 Thomas</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">CUFFT_CHECK</span><span class="p">(</span><span class="n">cufftExecZ2Z</span><span class="p">(</span><span class="n">plan_xy</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">cufftDoubleComplex</span><span class="o">*</span><span class="p">)</span><span class="n">fft_data</span><span class="p">,</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">                         </span><span class="p">(</span><span class="n">cufftDoubleComplex</span><span class="o">*</span><span class="p">)</span><span class="n">fft_data</span><span class="p">,</span><span class="w"> </span><span class="n">CUFFT_FORWARD</span><span class="p">));</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">fix_singular_column</span><span class="p">(</span><span class="n">Nx</span><span class="p">,</span><span class="w"> </span><span class="n">Ny</span><span class="p">,</span><span class="w"> </span><span class="n">Nz</span><span class="p">,</span><span class="w"> </span><span class="n">fft_data</span><span class="p">,</span><span class="w"> </span><span class="n">diag</span><span class="p">);</span><span class="w">   </span><span class="c1">// (0,0) 列：减均值，不清零</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="n">thomas_sweep</span><span class="p">(</span><span class="n">Nx</span><span class="p">,</span><span class="w"> </span><span class="n">Ny</span><span class="p">,</span><span class="w"> </span><span class="n">Nz</span><span class="p">,</span><span class="w"> </span><span class="n">fft_data</span><span class="p">,</span><span class="w"> </span><span class="n">tri_w</span><span class="p">);</span><span class="w">         </span><span class="c1">// 每个 (i,j) 一列三对角，就地求解</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="n">CUFFT_CHECK</span><span class="p">(</span><span class="n">cufftExecZ2Z</span><span class="p">(</span><span class="n">plan_xy</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">cufftDoubleComplex</span><span class="o">*</span><span class="p">)</span><span class="n">fft_data</span><span class="p">,</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">                         </span><span class="p">(</span><span class="n">cufftDoubleComplex</span><span class="o">*</span><span class="p">)</span><span class="n">fft_data</span><span class="p">,</span><span class="w"> </span><span class="n">CUFFT_INVERSE</span><span class="p">));</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">nrm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="kt">double</span><span class="p">)(</span><span class="n">Nx</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Ny</span><span class="p">);</span><span class="w">        </span><span class="c1">// 归一化是 Nx*Ny，不是 size</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="n">p</span><span class="p">[</span><span class="n">ijk</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fft_data</span><span class="p">[</span><span class="n">ijk</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">nrm</span><span class="p">;</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1">// src/State.cpp — 壁面模式的 xy 批量 2D FFT 计划</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">cfg</span><span class="p">.</span><span class="n">Ny</span><span class="p">,</span><span class="w"> </span><span class="n">cfg</span><span class="p">.</span><span class="n">Nx</span><span class="w"> </span><span class="p">};</span><span class="w">      </span><span class="c1">// cuFFT row-major，n[] 最后一维最快</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">CUFFT_CHECK</span><span class="p">(</span><span class="n">cufftPlanMany</span><span class="p">(</span><span class="o">&amp;</span><span class="n">plan_xy</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">cfg</span><span class="p">.</span><span class="n">Nx</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">cfg</span><span class="p">.</span><span class="n">Ny</span><span class="p">,</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">                          </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">cfg</span><span class="p">.</span><span class="n">Nx</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">cfg</span><span class="p">.</span><span class="n">Ny</span><span class="p">,</span><span class="w"> </span><span class="n">CUFFT_Z2Z</span><span class="p">,</span><span class="w"> </span><span class="n">cfg</span><span class="p">.</span><span class="n">Nz</span><span class="p">));</span>
+</code></pre></div>
+<h3 id="63">6.3 两个模式共用一个入口<a class="headerlink" href="#63" title="Permanent link">&para;</a></h3>
+<p>分派只发生在 <code>solve_pressure</code> 一处，归一化因子在函数内部<strong>只出现一次</strong>：</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1">// src/Poisson.cpp — 唯一入口</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kt">void</span><span class="w"> </span><span class="nf">solve_pressure</span><span class="p">(</span><span class="n">NS_Config</span><span class="w"> </span><span class="n">cfg</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">fft_data</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">tri_w</span><span class="p">,</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">                    </span><span class="n">cufftHandle</span><span class="w"> </span><span class="n">plan3d</span><span class="p">,</span><span class="w"> </span><span class="n">cufftHandle</span><span class="w"> </span><span class="n">plan_xy</span><span class="p">,</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">                    </span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">diag</span><span class="p">)</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="p">{</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">cfg</span><span class="p">.</span><span class="n">wall_z</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">solve_wall</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span><span class="w"> </span><span class="n">fft_data</span><span class="p">,</span><span class="w"> </span><span class="n">tri_w</span><span class="p">,</span><span class="w"> </span><span class="n">plan_xy</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">diag</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">    </span><span class="k">else</span><span class="w">            </span><span class="p">{</span><span class="w"> </span><span class="n">solve_periodic</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span><span class="w"> </span><span class="n">fft_data</span><span class="p">,</span><span class="w"> </span><span class="n">plan3d</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="p">}</span>
+</code></pre></div>
+<h2 id="7-cufft">7 cuFFT 的两个静默陷阱<a class="headerlink" href="#7-cufft" title="Permanent link">&para;</a></h2>
+<h3 id="71">7.1 轴序搞反不报错，只是得到一个转置的场<a class="headerlink" href="#71" title="Permanent link">&para;</a></h3>
+<p>cuFFT 是 row-major，<code>n[]</code> 的<strong>最后一维变化最快</strong>。本项目的索引约定是
+<span class="arithmatex">\(IDX(i,j,k) = i + jN_x + kN_xN_y\)</span>（<span class="arithmatex">\(x\)</span> 最快），所以二维变换的尺寸数组必须写
+<span class="arithmatex">\(n = \{N_y,\,N_x\}\)</span>，与已有的 <code>cufftPlan3d(Nz, Ny, Nx)</code> 同源。
+批量 2D 的 <span class="arithmatex">\(z\)</span>-slab 在 <code>IDX</code> 布局下天然连续（<code>idist = Nx*Ny</code>），<strong>不需要任何重排</strong>。</p>
+<h3 id="72-3d-size2d-nxny">7.2 归一化：3D 除 <code>size</code>，2D 批量除 <code>Nx*Ny</code><a class="headerlink" href="#72-3d-size2d-nxny" title="Permanent link">&para;</a></h3>
+<p>cuFFT 不做归一化，正向 + 逆向合起来会把结果放大<strong>变换点数</strong>倍：</p>
+<ul>
+<li>3D 版是 <span class="arithmatex">\(N_xN_yN_z\)</span>（代码里 <code>size</code>）；</li>
+<li>2D 批量版是 <span class="arithmatex">\(N_xN_y\)</span>。</li>
+</ul>
+<p>照抄一个 <code>/size</code> 会让 <span class="arithmatex">\(p\)</span> 小 <span class="arithmatex">\(N_z\)</span> 倍，于是 <span class="arithmatex">\(\nabla\cdot v\neq 0\)</span>，而且每一处都「看起来正常」。
+这就是把周期版抽成 <code>solve_pressure</code> 时最容易踩的坑，也是归一化因子只允许出现一次的原因。</p>
+<h2 id="8">8 公式 ↔ 代码对照<a class="headerlink" href="#8" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>公式</th>
+<th>代码</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(5) <span class="arithmatex">\(v^{*} = v^{n} + dt(-\nabla\cdot\Pi + f)\)</span></td>
+<td><code>Stokes.cpp</code> §3a（<code>tmp_fx/tmp_fy/tmp_fz</code>）</td>
+</tr>
+<tr>
+<td>(6) <span class="arithmatex">\(\nabla^2 p = \nabla\cdot v^{*}/dt\)</span></td>
+<td><code>Stokes.cpp</code> §3b + <code>Poisson.cpp: solve_pressure()</code></td>
+</tr>
+<tr>
+<td>(7) <span class="arithmatex">\(v^{n+1} = v^{*} - dt\nabla p\)</span></td>
+<td><code>Stokes.cpp</code> §5</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(\lambda(k) = 2(\cos\theta_x+\cos\theta_y+\cos\theta_z-3)\)</span></td>
+<td><code>Poisson.cpp: solve_periodic()</code> 的 <code>nrm</code></td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(\lambda_{xy}(m,n) = 2(\cos\theta_x-1)+2(\cos\theta_y-1)\)</span></td>
+<td><code>Poisson.cpp: build_tridiag_coeffs()</code> 的 <code>lam</code></td>
+</tr>
+<tr>
+<td>2D 批量归一化 <span class="arithmatex">\(N_xN_y\)</span></td>
+<td><code>Poisson.cpp: solve_wall()</code> 的 <code>nrm</code></td>
+</tr>
+<tr>
+<td>3D 归一化 <span class="arithmatex">\(N_xN_yN_z\)</span></td>
+<td><code>Poisson.cpp: solve_periodic()</code> 的 <code>/(double)size</code></td>
+</tr>
+<tr>
+<td>轴序 <span class="arithmatex">\(n=\{N_y,N_x\}\)</span>、batch <span class="arithmatex">\(N_z\)</span></td>
+<td><code>State.cpp</code> 的 <code>cufftPlanMany</code></td>
+</tr>
+<tr>
+<td><span class="arithmatex">\((0,0)\)</span> 奇异列的相容投影</td>
+<td><code>Poisson.cpp: fix_singular_column()</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9">9 实测判据<a class="headerlink" href="#9" title="Permanent link">&para;</a></h2>
+<p>以下数值转引自 <code>PROGRESS.md</code> 与 <code>doc/PressurePoisson.md</code> §11，
+测量环境 nvc++ 26.3 + RTX 3060（double）。</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>判据</th>
+<th>实测</th>
+<th>阈值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P1</td>
+<td>批量 2D FFT + 手写 z-DFT 对照 3D FFT（轴序）</td>
+<td>1.0e-14（8×6×5）、3.1e-14（32×16×8）</td>
+<td>&lt; 1e-13</td>
+</tr>
+<tr>
+<td>P2</td>
+<td>2D 批量 forward + inverse 的放大因子</td>
+<td>精确等于 <span class="arithmatex">\(N_xN_y\)</span></td>
+<td>等于 <span class="arithmatex">\(N_xN_y\)</span></td>
+</tr>
+<tr>
+<td>P3</td>
+<td><code>inembed = NULL</code> 与 <code>inembed = n</code> 对照</td>
+<td>0.000e+00（逐位）</td>
+<td>逐位</td>
+</tr>
+<tr>
+<td>P3'</td>
+<td>Thomas 对照稠密 Gauss（<code>--check-tridiag</code>）</td>
+<td>2.8e-16</td>
+<td>&lt; 1e-12</td>
+</tr>
+<tr>
+<td>P4</td>
+<td>奇异列定规：<span class="arithmatex">\(\vert x_0\vert\)</span> 与 <span class="arithmatex">\(\vert A_0x-b\vert\)</span></td>
+<td>8.2e-15</td>
+<td>&lt; 1e-13</td>
+</tr>
+<tr>
+<td>P5</td>
+<td>壁面算子往返（<code>--check-poisson</code>）</td>
+<td>4.3e-16（8×4×6）、2.7e-15（128×64×32）</td>
+<td>&lt; 1e-10</td>
+</tr>
+<tr>
+<td>P6</td>
+<td>周期算子往返（<code>--check-poisson</code>）</td>
+<td>2.0e-15（128×64×32）</td>
+<td>&lt; 1e-10</td>
+</tr>
+<tr>
+<td>P6'</td>
+<td>相容性诊断（人为给不相容右端）</td>
+<td>diag = 3.811 等于 <span class="arithmatex">\(\vert\sum_k\hat{b}_k\vert\)</span></td>
+<td>匹配</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p><strong>往返判据为什么最判决性</strong>：<code>p_ref → 手写 div∘grad → b → solve_pressure → p</code>，
+输出的 <span class="arithmatex">\(p\)</span> 必须等于 <span class="arithmatex">\(p_{ref}\)</span> 加一个常数。手写算子独立于求解器
+（求解器走 FFT + Thomas，手写算子走逐点 ghost 差分），所以这不是自洽性检验。
+它抓到过一个真实 bug：<code>thomas_sweep</code> 里 z 向步长写成 1 而不是 <code>Nx*Ny</code>，
+往返误差 O(1)。</p>
+</div>
+<h2 id="10">10 下一步<a class="headerlink" href="#10" title="Permanent link">&para;</a></h2>
+<p>第二篇把「解泊松」变成了「除以本征值」和「解三对角」，但<strong>离散算子本身</strong>还没写出来：
+交错网格怎么摆、<span class="arithmatex">\(div = -grad^{T}\)</span> 怎么成立、壁面的 Neumann 边界从哪来、
+Thomas 的系数为什么能提前算好、切向无滑移 ghost 长什么样 —— 全部见
+<a href="../discretization/">第三篇：二维与 z 向离散化</a>。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="页脚" >
+        
+          
+          <a href="../ns-equation/" class="md-footer__link md-footer__link--prev" aria-label="上一页: 第一篇 · NS 方程推导">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              <div class="md-ellipsis">
+                第一篇 · NS 方程推导
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../discretization/" class="md-footer__link md-footer__link--next" aria-label="下一页: 第三篇 · 离散化">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              <div class="md-ellipsis">
+                第三篇 · 离散化
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.top", "navigation.footer", "content.code.copy", "search.suggest", "search.highlight", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
