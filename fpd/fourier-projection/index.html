@@ -901,10 +901,10 @@
 <h3 id="54">5.4 完整的离散求解流程<a class="headerlink" href="#54" title="Permanent link">&para;</a></h3>
 <p>每一个时间步循环执行以下步骤：</p>
 <ol>
-<li><strong>显式步推进速度</strong>：计算对流和扩散项，得到 <span class="arithmatex">\(u^*, v^*\)</span>。</li>
+<li><strong>显式步推进速度</strong>：计算对流和扩散项，得到 <span class="arithmatex">\(v_x^*, v_y^*\)</span>。</li>
 <li><strong>计算离散散度（右端项）</strong>：</li>
 </ol>
-<div class="arithmatex">\[b[i, j] = \frac{1}{\Delta t}\Big( (u^*[i, j] - u^*[i-1, j]) + (v^*[i, j] - v^*[i, j-1]) \Big)\]</div>
+<div class="arithmatex">\[b[i, j] = \frac{1}{\Delta t}\Big( (v_x^*[i, j] - v_x^*[i-1, j]) + (v_y^*[i, j] - v_y^*[i, j-1]) \Big)\]</div>
 <ol>
 <li><strong>2D FFT 变换</strong>：</li>
 </ol>
